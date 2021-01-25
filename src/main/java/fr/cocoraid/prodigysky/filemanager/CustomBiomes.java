@@ -69,9 +69,8 @@ public class CustomBiomes {
 
       File metaFile = new File(w.getWorldFolder().getPath() + "/datapacks/prodigysky/pack.mcmeta");
       if (!metaFile.exists()) {
-        InputStream is = this.instance.getResource("pack.mcmeta");
 
-        try {
+        try(InputStream is = this.instance.getResource("pack.mcmeta")) {
           FileUtils.copyInputStreamToFile(is, metaFile);
         } catch (IOException var9) {
           var9.printStackTrace();
@@ -90,7 +89,6 @@ public class CustomBiomes {
   private void loadDefaults() {
     File customBiomeFolder = new File(this.instance.getDataFolder().getPath() + "/custom_biomes");
     if (!customBiomeFolder.exists()) {
-      String path = "examples";
       File jarFile = new File(
           this.instance.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 
