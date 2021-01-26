@@ -1,10 +1,11 @@
 package fr.cocoraid.prodigysky.filemanager;
 
-import fr.cocoraid.prodigysky.ProdigySky;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -18,16 +19,22 @@ import java.util.jar.JarFile;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
+
+import fr.cocoraid.prodigysky.ProdigySky;
+import fr.cocoraid.prodigysky.nms.biomes.Biomes;
 
 public class CustomBiomes {
 
   private boolean missingDatapacks;
   private final ProdigySky instance;
-  private Map<String, Integer> biomes = new HashMap<>();
+  private final Biomes biomes;
 
-  public CustomBiomes(ProdigySky instance) {
+  private Map<String, Integer> biomeList = new HashMap<>();
+
+  public CustomBiomes(ProdigySky instance, Biomes biomes) {
     this.instance = instance;
+    this.biomes = biomes;
+
     ConsoleCommandSender cc = Bukkit.getConsoleSender();
     this.loadDefaults();
     List<String> biomesWaiting = new ArrayList<>();
@@ -45,7 +52,7 @@ public class CustomBiomes {
 
     this.registerCustomBiomes();
     this.cleanup(biomesWaiting);
-    if (biomesWaiting.stream().anyMatch((b) -> !this.biomes.containsKey(b))) {
+    if (biomesWaiting.stream().anyMatch((b) -> !this.biomeList.containsKey(b))) {
       cc.sendMessage(
           "§6[ProdigySky Warning] §cOne or more biomes are not yet loaded by the server... Please restart the server (dont't reload)");
       this.missingDatapacks = true;
@@ -54,7 +61,7 @@ public class CustomBiomes {
   }
 
   private void registerCustomBiomes() {
-    this.biomes = this.instance.getNMS().getBiomes().getBiomes();
+    this.biomeList = biomes.getBiomes();
   }
 
   private void placeBiomeForWorlds(File biome) {
@@ -70,15 +77,15 @@ public class CustomBiomes {
       File metaFile = new File(w.getWorldFolder().getPath() + "/datapacks/prodigysky/pack.mcmeta");
       if (!metaFile.exists()) {
 
-        try(InputStream is = this.instance.getResource("pack.mcmeta")) {
-          FileUtils.copyInputStreamToFile(is, metaFile);
+        try (InputStream is = this.instance.getResource("pack.mcmeta")) {
+          Files.copy(is, metaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException var9) {
           var9.printStackTrace();
         }
       }
 
       try {
-        FileUtils.copyFileToDirectory(biome, folder);
+        Files.copy(biome.toPath(), Path.of(folder.getAbsolutePath(), biome.getName()));
       } catch (IOException var10) {
         var10.printStackTrace();
       }
@@ -131,11 +138,7 @@ public class CustomBiomes {
         } while (!prskyDatapack.exists());
 
         if (!this.instance.getConfiguration().getEnabledWorlds().contains(world)) {
-          try {
-            FileUtils.deleteDirectory(prskyDatapack);
-          } catch (IOException var13) {
-            var13.printStackTrace();
-          }
+          deleteDirectory(prskyDatapack);
         }
 
         String DATAPACK_PATH = world.getWorldFolder().getPath()
@@ -148,7 +151,7 @@ public class CustomBiomes {
           String name = biome.getName().replace(".json", "").toLowerCase();
           if (!customBiomes.contains(name)) {
             try {
-              FileUtils.forceDelete(biome);
+              Files.delete(biome.toPath());
             } catch (IOException var14) {
               var14.printStackTrace();
             }
@@ -158,11 +161,21 @@ public class CustomBiomes {
     }
   }
 
-  public Map<String, Integer> getBiomes() {
-    return this.biomes;
+  public Map<String, Integer> getBiomeList() {
+    return this.biomeList;
   }
 
   public boolean isMissingDatapacks() {
     return this.missingDatapacks;
+  }
+
+  private boolean deleteDirectory(File directoryToBeDeleted) {
+    File[] allContents = directoryToBeDeleted.listFiles();
+    if (allContents != null) {
+      for (File file : allContents) {
+        deleteDirectory(file);
+      }
+    }
+    return directoryToBeDeleted.delete();
   }
 }

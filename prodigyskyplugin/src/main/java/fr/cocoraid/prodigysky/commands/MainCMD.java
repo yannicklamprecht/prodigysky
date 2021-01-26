@@ -20,9 +20,11 @@ import org.bukkit.entity.Player;
 @CommandAlias("prodigysky|pgs")
 public class MainCMD extends BaseCommand {
    private ProdigySky instance;
+   private final ProdigySkyAPI prodigySkyAPI;
 
-   public MainCMD(ProdigySky instance) {
+   public MainCMD(ProdigySky instance, ProdigySkyAPI prodigySkyAPI) {
       this.instance = instance;
+      this.prodigySkyAPI = prodigySkyAPI;
    }
 
    @Default
@@ -46,7 +48,7 @@ public class MainCMD extends BaseCommand {
    @CommandCompletion("@biomeName")
    @Subcommand("set")
    public void set(@Conditions("playerWorldEnabled") Player player, String biomeName, SkyEffect skyEffect, EffectDuration duration) {
-      ProdigySkyAPI.setBiome(player, biomeName, skyEffect == SkyEffect.SMOG, duration);
+      prodigySkyAPI.setBiome(player, biomeName, skyEffect == SkyEffect.SMOG, duration);
    }
 
    @CommandPermission("pgs.set.other")
@@ -58,7 +60,7 @@ public class MainCMD extends BaseCommand {
          if (!this.instance.getConfiguration().getEnabledWorlds().contains(player.getWorld())) {
             sender.sendMessage("§cThe player " + player.getName() + " is not inside a world where the sky color is enabled");
          } else {
-            ProdigySkyAPI.setBiome(player, biomeName, skyEffect == SkyEffect.SMOG, duration);
+            prodigySkyAPI.setBiome(player, biomeName, skyEffect == SkyEffect.SMOG, duration);
          }
       } else {
          sender.sendMessage("§cThe player " + target + " does not exist !");
@@ -69,7 +71,7 @@ public class MainCMD extends BaseCommand {
    @CommandCompletion("@biomeName")
    @Subcommand("setworld")
    public void setWorld(CommandSender sender, String biomeName, @Conditions("worldEnabled") World world, SkyEffect skyEffect, EffectDuration duration) {
-      ProdigySkyAPI.setBiome(world, biomeName, skyEffect == SkyEffect.SMOG, duration);
+      prodigySkyAPI.setBiome(world, biomeName, skyEffect == SkyEffect.SMOG, duration);
    }
 
    @CommandPermission("pgs.remove.worlds")
@@ -79,14 +81,14 @@ public class MainCMD extends BaseCommand {
       if (Bukkit.getWorld(w) == null) {
          sender.sendMessage("§cWorld " + w + " not found !");
       } else {
-         ProdigySkyAPI.removeBiome(Bukkit.getWorld(w));
+         prodigySkyAPI.removeBiome(Bukkit.getWorld(w));
       }
    }
 
    @CommandPermission("pgs.remove")
    @Subcommand("remove")
    public void remove(Player sender) {
-      ProdigySkyAPI.removeBiome(sender);
+      prodigySkyAPI.removeBiome(sender);
    }
 
    @CommandPermission("pgs.remove.other")
@@ -94,7 +96,7 @@ public class MainCMD extends BaseCommand {
    @Subcommand("removeplayer")
    public void remove(CommandSender sender, String target) {
       if (Bukkit.getPlayer(target) != null && Bukkit.getPlayer(target).isOnline()) {
-         ProdigySkyAPI.removeBiome(Bukkit.getPlayer(target));
+         prodigySkyAPI.removeBiome(Bukkit.getPlayer(target));
       } else {
          sender.sendMessage("§cThe player " + target + " does not exist !");
       }

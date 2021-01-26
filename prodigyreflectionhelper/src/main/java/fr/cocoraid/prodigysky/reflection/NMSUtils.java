@@ -1,4 +1,4 @@
-package fr.cocoraid.prodigysky.nms;
+package fr.cocoraid.prodigysky.reflection;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import java.util.OptionalLong;

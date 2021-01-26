@@ -1,4 +1,4 @@
-package fr.cocoraid.prodigysky.nms;
+package fr.cocoraid.prodigysky.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -9,35 +9,32 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 
 public final class Reflection {
-   private static String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
-   private static String NMS_PREFIX;
-   private static String VERSION;
-   private static Pattern MATCH_VARIABLE;
+   private static final String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
+   private static final String NMS_PREFIX;
+   private static final String VERSION;
+   private static final Pattern MATCH_VARIABLE;
 
    private Reflection() {
    }
 
-   public static Reflection.FieldAccessor getField(Class target, String name, Class fieldType) {
+   public static Reflection.FieldAccessor getField(Class<?> target, String name, Class<?> fieldType) {
       return getField(target, name, fieldType, 0);
    }
 
-   public static Reflection.FieldAccessor getField(String className, String name, Class fieldType) {
+   public static Reflection.FieldAccessor getField(String className, String name, Class<?> fieldType) {
       return getField(getClass(className), name, fieldType, 0);
    }
 
-   public static Reflection.FieldAccessor getField(Class target, Class fieldType, int index) {
-      return getField(target, (String)null, fieldType, index);
+   public static Reflection.FieldAccessor getField(Class<?> target, Class<?> fieldType, int index) {
+      return getField(target, null, fieldType, index);
    }
 
-   public static Reflection.FieldAccessor getField(String className, Class fieldType, int index) {
+   public static Reflection.FieldAccessor getField(String className, Class<?> fieldType, int index) {
       return getField(getClass(className), fieldType, index);
    }
 
-   private static Reflection.FieldAccessor getField(Class target, String name, Class fieldType, int index) {
-      Field[] var4 = target.getDeclaredFields();
-      int var5 = var4.length;
-
-      for (final Field field : var4) {
+   private static Reflection.FieldAccessor getField(Class<?> target, String name, Class<?> fieldType, int index) {
+      for (final Field field : target.getDeclaredFields()) {
          if ((name == null || field.getName().equals(name)) && fieldType
              .isAssignableFrom(field.getType()) && index-- <= 0) {
             field.setAccessible(true);
@@ -72,29 +69,25 @@ public final class Reflection {
       }
    }
 
-   public static Reflection.MethodInvoker getMethod(String className, String methodName, Class... params) {
-      return getTypedMethod(getClass(className), methodName, (Class)null, params);
+   public static Reflection.MethodInvoker getMethod(String className, String methodName, Class<?>... params) {
+      return getTypedMethod(getClass(className), methodName, null, params);
    }
 
-   public static Reflection.MethodInvoker getMethod(Class clazz, String methodName, Class... params) {
-      return getTypedMethod(clazz, methodName, (Class)null, params);
+   public static Reflection.MethodInvoker getMethod(Class<?> clazz, String methodName, Class<?>... params) {
+      return getTypedMethod(clazz, methodName, null, params);
    }
 
-   public static Reflection.MethodInvoker getTypedMethod(Class clazz, String methodName, Class returnType, Class... params) {
-      Method[] var4 = clazz.getDeclaredMethods();
-      int var5 = var4.length;
-
-      for(int var6 = 0; var6 < var5; ++var6) {
-         final Method method = var4[var6];
-         if ((methodName == null || method.getName().equals(methodName)) && (returnType == null || method.getReturnType().equals(returnType)) && Arrays.equals(method.getParameterTypes(), params)) {
+   public static Reflection.MethodInvoker getTypedMethod(Class<?> clazz, String methodName, Class<?> returnType, Class<?>... params) {
+      for (final Method method : clazz.getDeclaredMethods()) {
+         if ((methodName == null || method.getName().equals(methodName)) && (returnType == null
+             || method.getReturnType().equals(returnType)) && Arrays
+             .equals(method.getParameterTypes(), params)) {
             method.setAccessible(true);
-            return new Reflection.MethodInvoker() {
-               public Object invoke(Object target, Object... arguments) {
-                  try {
-                     return method.invoke(target, arguments);
-                  } catch (Exception var4) {
-                     throw new RuntimeException("Cannot invoke method " + method, var4);
-                  }
+            return (target, arguments) -> {
+               try {
+                  return method.invoke(target, arguments);
+               } catch (Exception var41) {
+                  throw new RuntimeException("Cannot invoke method " + method, var41);
                }
             };
          }
@@ -107,25 +100,22 @@ public final class Reflection {
       }
    }
 
-   public static Reflection.ConstructorInvoker getConstructor(String className, Class... params) {
+   public static Reflection.ConstructorInvoker getConstructor(String className, Class<?>... params) {
       return getConstructor(getClass(className), params);
    }
 
-   public static Reflection.ConstructorInvoker getConstructor(Class clazz, Class... params) {
-      Constructor[] var2 = clazz.getDeclaredConstructors();
+   public static Reflection.ConstructorInvoker getConstructor(Class<?> clazz, Class<?>... params) {
+      Constructor<?>[] var2 = clazz.getDeclaredConstructors();
       int var3 = var2.length;
 
-      for(int var4 = 0; var4 < var3; ++var4) {
-         final Constructor constructor = var2[var4];
+      for (final Constructor<?> constructor : var2) {
          if (Arrays.equals(constructor.getParameterTypes(), params)) {
             constructor.setAccessible(true);
-            return new Reflection.ConstructorInvoker() {
-               public Object invoke(Object... arguments) {
-                  try {
-                     return constructor.newInstance(arguments);
-                  } catch (Exception var3) {
-                     throw new RuntimeException("Cannot invoke constructor " + constructor, var3);
-                  }
+            return arguments -> {
+               try {
+                  return constructor.newInstance(arguments);
+               } catch (Exception var31) {
+                  throw new RuntimeException("Cannot invoke constructor " + constructor, var31);
                }
             };
          }
@@ -134,24 +124,23 @@ public final class Reflection {
       throw new IllegalStateException(String.format("Unable to find constructor for %s (%s).", clazz, Arrays.asList(params)));
    }
 
-   public static Class getUntypedClass(String lookupName) {
-      Class clazz = getClass(lookupName);
-      return clazz;
+   public static Class<?> getUntypedClass(String lookupName) {
+      return getClass(lookupName);
    }
 
-   public static Class getClass(String lookupName) {
+   public static Class<?> getClass(String lookupName) {
       return getCanonicalClass(expandVariables(lookupName));
    }
 
-   public static Class getMinecraftClass(String name) {
+   public static Class<?> getMinecraftClass(String name) {
       return getCanonicalClass(NMS_PREFIX + "." + name);
    }
 
-   public static Class getCraftBukkitClass(String name) {
+   public static Class<?> getCraftBukkitClass(String name) {
       return getCanonicalClass(OBC_PREFIX + "." + name);
    }
 
-   private static Class getCanonicalClass(String canonicalName) {
+   private static Class<?> getCanonicalClass(String canonicalName) {
       try {
          return Class.forName(canonicalName);
       } catch (ClassNotFoundException var2) {
@@ -166,7 +155,6 @@ public final class Reflection {
       String replacement;
       for(matcher = MATCH_VARIABLE.matcher(name); matcher.find(); matcher.appendReplacement(output, Matcher.quoteReplacement(replacement))) {
          String variable = matcher.group(1);
-         replacement = "";
          if ("fr/cocoraid/prodigynightclub/nms".equalsIgnoreCase(variable)) {
             replacement = NMS_PREFIX;
          } else if ("obc".equalsIgnoreCase(variable)) {
@@ -191,7 +179,7 @@ public final class Reflection {
    static {
       NMS_PREFIX = OBC_PREFIX.replace("org.bukkit.craftbukkit", "net.minecraft.server");
       VERSION = OBC_PREFIX.replace("org.bukkit.craftbukkit", "").replace(".", "");
-      MATCH_VARIABLE = Pattern.compile("\\{([^\\}]+)\\}");
+      MATCH_VARIABLE = Pattern.compile("\\{([^}]+)}");
    }
 
    public interface FieldAccessor {
