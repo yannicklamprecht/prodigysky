@@ -155,7 +155,7 @@ public final class Reflection {
       String replacement;
       for(matcher = MATCH_VARIABLE.matcher(name); matcher.find(); matcher.appendReplacement(output, Matcher.quoteReplacement(replacement))) {
          String variable = matcher.group(1);
-         if ("fr/cocoraid/prodigynightclub/nms".equalsIgnoreCase(variable)) {
+         if ("fr/cocoraid/prodigynightclub/fr.cocoraid.prodigysky.nms".equalsIgnoreCase(variable)) {
             replacement = NMS_PREFIX;
          } else if ("obc".equalsIgnoreCase(variable)) {
             replacement = OBC_PREFIX;

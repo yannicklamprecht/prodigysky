@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.CommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import fr.cocoraid.prodigysky.commands.MainCMD;
@@ -66,7 +68,7 @@ public class ProdigySky extends JavaPlugin {
   }
 
   private void loadCommands() {
-    PaperCommandManager manager = new PaperCommandManager(this);
+    BukkitCommandManager manager = new BukkitCommandManager(this);
     manager.getCommandConditions().addCondition(World.class, "worldEnabled", (c, exec, value) -> {
       if (value != null) {
         if (!this.configuration.getEnabledWorlds().contains(value)) {

@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("prodigysky|pgs")
 public class MainCMD extends BaseCommand {
-   private ProdigySky instance;
+   private final ProdigySky instance;
    private final ProdigySkyAPI prodigySkyAPI;
 
    public MainCMD(ProdigySky instance, ProdigySkyAPI prodigySkyAPI) {
