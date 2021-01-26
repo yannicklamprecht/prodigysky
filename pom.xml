@@ -14,6 +14,7 @@
     <module>Core</module>
     <module>1_16_R2</module>
     <module>1_16_R3</module>
+    <module>prodigyskyplugin</module>
   </modules>
 
   <name>ProdSky-Parent</name>

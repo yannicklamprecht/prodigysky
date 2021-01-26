@@ -1,4 +1,4 @@
-package fr.cocoraid.prodigysky.nms.biomes.versions;
+package fr.cocoraid.prodigysky.nms;
 
 import fr.cocoraid.prodigysky.nms.biomes.Biomes;
 
@@ -17,12 +17,14 @@ public class Biomes_1_16R3 implements Biomes {
 
   public Map<String, Integer> getBiomes() {
     Map<String, Integer> biomes = new HashMap<>();
+
     WorldServer ws = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
     MinecraftServer server = ws.getMinecraftServer();
     server.getCustomRegistry().b(IRegistry.ay).keySet().forEach((k) -> {
       if (k.getKey().startsWith("prodigysky/")) {
         BiomeBase bb = server.getCustomRegistry().b(IRegistry.ay).get(k);
         int biomeID = server.getCustomRegistry().b(IRegistry.ay).a(bb);
+
         biomes.put(k.getKey().replace("prodigysky/", ""), biomeID);
       }
 

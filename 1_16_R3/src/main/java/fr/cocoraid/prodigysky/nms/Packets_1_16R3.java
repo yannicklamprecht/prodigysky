@@ -1,4 +1,4 @@
-package fr.cocoraid.prodigysky.nms.packet.versions;
+package fr.cocoraid.prodigysky.nms;
 
 import fr.cocoraid.prodigysky.ProdigySky;
 import fr.cocoraid.prodigysky.nms.NMSUtils;
