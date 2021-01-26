@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>Prodigy_1_16_R3</artifactId>
+  <artifactId>1_16_R3</artifactId>
   <packaging>jar</packaging>
 
   <properties>

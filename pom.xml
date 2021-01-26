@@ -12,10 +12,10 @@
 
   <modules>
     <module>Core</module>
-    <module>prodigyreflectionhelper</module>
+    <module>reflectionhelper</module>
     <module>1_16_R2</module>
     <module>1_16_R3</module>
-    <module>prodigyskyplugin</module>
+    <module>prodigyplugin</module>
   </modules>
 
   <name>ProdSky-Parent</name>
