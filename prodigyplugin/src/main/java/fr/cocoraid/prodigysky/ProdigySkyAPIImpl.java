@@ -52,7 +52,7 @@ public class ProdigySkyAPIImpl implements ProdigySkyAPI {
       if (!getBiomeWorlds().containsKey(w) || getBiomeWorlds().containsKey(w) && getBiomeWorlds()
           .get(w)
           .getName().equalsIgnoreCase(biomeTemplate)) {
-        packets.sendFakeBiome(prodigySky, player);
+        packets.sendFakeBiome(player);
       }
 
     }
@@ -63,7 +63,7 @@ public class ProdigySkyAPIImpl implements ProdigySkyAPI {
     if (getBiomePlayer().containsKey(player.getUniqueId())) {
       boolean hasSmog = getBiomePlayer().get(player.getUniqueId()).isSmog();
       getBiomePlayer().remove(player.getUniqueId());
-      packets.sendFakeBiome(prodigySky, player);
+      packets.sendFakeBiome(player);
       if (hasSmog) {
         packets.restoreDefaultWorld(player);
       }
@@ -81,7 +81,7 @@ public class ProdigySkyAPIImpl implements ProdigySkyAPI {
       if (duration == EffectDuration.PERSISTENT) {
         Bukkit.getOnlinePlayers().stream().filter((cur) -> cur.getWorld().equals(w))
             .forEach((cur) -> {
-              packets.sendFakeBiome(prodigySky, cur);
+              packets.sendFakeBiome(cur);
               boolean playerSmog =
                   getBiomePlayer().containsKey(cur.getUniqueId()) && getBiomePlayer()
                       .get(cur.getUniqueId())
@@ -94,7 +94,7 @@ public class ProdigySkyAPIImpl implements ProdigySkyAPI {
       } else if (duration == EffectDuration.VOLATILE && !tempPlayers.isEmpty()) {
         tempPlayers.forEach((uuid) -> {
           Player cur = Bukkit.getPlayer(uuid);
-          packets.sendFakeBiome(prodigySky, cur);
+          packets.sendFakeBiome(cur);
           boolean playerSmog = cur != null && getBiomePlayer().containsKey(cur.getUniqueId()) && getBiomePlayer()
               .get(cur.getUniqueId())
               .isSmog();
@@ -136,7 +136,7 @@ public class ProdigySkyAPIImpl implements ProdigySkyAPI {
               packets.restoreDefaultWorld(cur);
             }
 
-            packets.sendFakeBiome(prodigySky, cur);
+            packets.sendFakeBiome(cur);
           });
     }
   }

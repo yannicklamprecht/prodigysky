@@ -16,10 +16,10 @@ public class VersionDetector {
 
     if (version.equals("v1_16_R2")) {
       this.biomes = new fr.cocoraid.prodigysky.nms.Biomes_1_16R2();
-      this.packets = new fr.cocoraid.prodigysky.nms.Packets_1_16R2();
+      this.packets = new fr.cocoraid.prodigysky.nms.Packets_1_16R2(javaPlugin);
     } else if (version.equals("v1_16_R3")) {
       this.biomes = new fr.cocoraid.prodigysky.nms.Biomes_1_16R3();
-      this.packets = new fr.cocoraid.prodigysky.nms.Packets_1_16R3();
+      this.packets = new fr.cocoraid.prodigysky.nms.Packets_1_16R3(javaPlugin);
     } else {
       javaPlugin.getServer().getConsoleSender().sendMessage(
           "§4[ProdigyNightclub] The plugin is not compatible with this version sorry :'(");

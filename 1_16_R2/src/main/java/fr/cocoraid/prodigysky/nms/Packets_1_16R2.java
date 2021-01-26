@@ -25,9 +25,14 @@ import net.minecraft.server.v1_16_R2.WorldServer;
 public class Packets_1_16R2 implements Packets {
 
   private static final Reflection.MethodInvoker refreshChunksMethod;
+  private final JavaPlugin javaPlugin;
 
-  public void sendFakeBiome(JavaPlugin javaPlugin, Player player) {
-    this.refreshChunksAround(javaPlugin, player);
+  public Packets_1_16R2(JavaPlugin javaPlugin) {
+    this.javaPlugin = javaPlugin;
+  }
+
+  public void sendFakeBiome(Player player) {
+    this.refreshChunksAround(player);
   }
 
   public void setSmog(Player player) {
@@ -83,7 +88,7 @@ public class Packets_1_16R2 implements Packets {
     con.sendPacket(position);
   }
 
-  private void refreshChunksAround(JavaPlugin javaPlugin, Player player) {
+  private void refreshChunksAround(Player player) {
     final WorldServer worldServer = ((CraftWorld) player.getWorld()).getHandle();
     final EntityPlayer ep = ((CraftPlayer) player).getHandle();
     (new BukkitRunnable() {

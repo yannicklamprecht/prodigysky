@@ -52,9 +52,6 @@ public class ProdigySky extends JavaPlugin {
     }).runTaskTimerAsynchronously(this, 20L, 20L);
   }
 
-  public void onDisable() {
-  }
-
   private void displayBanner() {
     ConsoleCommandSender cc = Bukkit.getConsoleSender();
     cc.sendMessage("§5 ______               _ _                 §b______ _");
