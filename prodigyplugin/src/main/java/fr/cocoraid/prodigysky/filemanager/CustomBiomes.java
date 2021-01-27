@@ -85,7 +85,7 @@ public class CustomBiomes {
       }
 
       try {
-        Files.copy(biome.toPath(), Path.of(folder.getAbsolutePath(), biome.getName()));
+        Files.copy(biome.toPath(), Path.of(folder.getAbsolutePath(), biome.getName()), StandardCopyOption.REPLACE_EXISTING);
       } catch (IOException var10) {
         var10.printStackTrace();
       }
